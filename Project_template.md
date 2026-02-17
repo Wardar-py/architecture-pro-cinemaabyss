@@ -4,8 +4,8 @@
 
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
-Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
+
+[Диаграмма контейнеров](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/diagrams/ms_c4_container.puml)
 
 
 ## Задание 2
@@ -58,6 +58,9 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
+[Movie_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/movie_events.png)
+[Payment_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/payment_events.png)
+[User_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/user_events.png)
 
 
 ## Задание 3
