@@ -98,8 +98,8 @@ services:
   # Events Microservice
   events-service:
     build:
-      context: .
-      dockerfile: ./src/microservices/events/Dockerfile
+      context: ./src/microservices/events
+      dockerfile: Dockerfile
     container_name: cinemaabyss-events-service
     depends_on:
       kafka:
@@ -117,8 +117,8 @@ services:
   # Proxy Service (API Gateway)
   proxy-service:
     build:
-      context: .
-      dockerfile: ./src/microservices/proxy/Dockerfile
+      context: ./src/microservices/proxy
+      dockerfile: Dockerfile
     container_name: cinemaabyss-proxy-service
     depends_on:
 #      - monolith
