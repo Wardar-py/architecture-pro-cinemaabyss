@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: proxy-service
-        image:  ghcr.io/wardar-py/architecture-pro-cinemaabyss/proxy-service:sha-3b42979
+        image: ghcr.io/wardar-py/architecture-pro-cinemaabyss/proxy-service:sha-e66c427
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

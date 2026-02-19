@@ -92,7 +92,7 @@ async def get_users(id: int):
     return response
 
 
-@app.post("/api/users")
+@app.post("/api/users", status_code=201)
 async def create_user(request: dict):
     response = await ServiceClient()._make_request("monolith", "POST", "/api/users", request)
     return response
