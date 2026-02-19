@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from aiokafka.errors import KafkaConnectionError
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 import os
 
@@ -91,6 +91,14 @@ async def lifespan(app: FastAPI):
     await producer.stop()
 
 app = FastAPI(lifespan=lifespan)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    body = await request.body()
+    logger.info(f"Incoming request: {request.method} {request.url} Body: {body.decode('utf-8', errors='ignore')}")
+    response = await call_next(request)
+    logger.info(f"Response status: {response.status_code}")
+    return response
 
 @app.post("/api/events/payment", status_code=201)
 async def send_event(payload: dict):
