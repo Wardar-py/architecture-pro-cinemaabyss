@@ -276,7 +276,8 @@ cat .docker/config.json | base64
 
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
-
+[Events_service](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/events_service.png)
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/web_movies.png)
 
 ## Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -334,7 +335,7 @@ kubectl delete  namespace cinemaabyss
 ```
 Запустите 
 ```bash
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
 ```
 Если в процессе будет ошибка
 ```code
@@ -351,6 +352,7 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/task_4_web_movies.png)
 
 
 # Задание 5
