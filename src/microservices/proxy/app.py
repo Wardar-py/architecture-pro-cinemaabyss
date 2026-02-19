@@ -69,7 +69,7 @@ async def health_check():
     return {"status": "healthy"}
 
 
-@app.post("/api/movies")
+@app.post("/api/movies", status_code=201)
 async def create_movie(request: dict):
     response = await ServiceClient()._make_request("movies", "POST", "/api/movies", request)
     return response
@@ -84,4 +84,39 @@ async def get_movies(id: str | None = None):
 @app.get("/api/users")
 async def get_users():
     response = await ServiceClient()._make_request("monolith", "GET", "/api/users")
+    return response
+
+@app.get("/api/users")
+async def get_users(id: int):
+    response = await ServiceClient()._make_request("monolith", "GET", "/api/users", query={"id": id})
+    return response
+
+
+@app.post("/api/users")
+async def create_user(request: dict):
+    response = await ServiceClient()._make_request("monolith", "POST", "/api/users", request)
+    return response
+
+
+@app.get("/api/payments")
+async def get_payments(id: int):
+    response = await ServiceClient()._make_request("monolith", "GET", "/api/payments", query={"id": id})
+    return response
+
+
+@app.post("/api/payments", status_code=201)
+async def create_payment(request: dict):
+    response = await ServiceClient()._make_request("monolith", "POST", "/api/payments", request)
+    return response
+
+
+@app.get("/api/subscriptions")
+async def get_subscriptions(id: int):
+    response = await ServiceClient()._make_request("monolith", "GET", "/api/subscriptions", query={"id": id})
+    return response
+
+
+@app.post("/api/subscriptions", status_code=201)
+async def create_subscription(request: dict):
+    response = await ServiceClient()._make_request("monolith", "POST", "/api/subscriptions", request)
     return response
