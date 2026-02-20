@@ -121,7 +121,7 @@ services:
       dockerfile: Dockerfile
     container_name: cinemaabyss-proxy-service
     depends_on:
-#      - monolith
+      - monolith
       - movies-service
       - events-service
     ports:

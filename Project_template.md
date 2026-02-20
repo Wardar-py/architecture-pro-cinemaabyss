@@ -364,16 +364,36 @@ helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
 
 helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
+docker pull istio/proxyv2:1.29.0 #грузим последний образ локально, у миникуб нет доступа в интернет
+minikube stop # остонавливаем виртуалку
+minikube image load istio/proxyv2:1.29.0 # закидываем в миникуб, после пытаемся поднять istio-ingressgateway, если упал скачиваем новую версию
+minikube start # запускаемся после скачивания
 helm install istio-ingressgateway istio/gateway -n istio-system
+
 helm install istiod istio/istiod -n istio-system --wait
 
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
+
+#-------------------------------------------------------------------------------------------
+# после поднятия подов, если кафка лежит и есть такая ошибка 'InconsistentClusterIdException: The Cluster ID vgtRNWKrS7eFthyjoPN-3w doesn't match stored clusterId Some(tWBF63F_Tey082b9uVu3Mg) in meta.properties'
+# то нужно снести kafka-data pvc для этого:
+kubectl get pvc -n cinemaabyss | grep kafka
+kubectl delete pvc data-kafka-0 -n cinemaabyss
+# если долго сносится
+kubectl get pvc -n cinemaabyss   # посмотреть статус
+kubectl describe pvc kafka-data -n cinemaabyss   # возможные ошибки
+# сносим принудительно, сносим также ресурсы
+kubectl delete pod kafka-0 -n cinemaabyss --force --grace-period=0
+kubectl delete -f src/kubernetes/kafka/kafka.yaml -n cinemaabyss
+# пересоздаем кафку
+kubectl apply -f src/kubernetes/kafka/kafka.yaml -n cinemaabyss
+#-------------------------------------------------------------------------------------------
 
 kubectl label namespace cinemaabyss istio-injection=enabled --overwrite
 
 kubectl get namespace -L istio-injection
 
-kubectl apply -f .\src\kubernetes\circuit-breaker-config.yaml -n cinemaabyss
+kubectl apply -f ./src/kubernetes/circuit-breaker-config.yaml -n cinemaabyss
 
 ```
 
@@ -408,7 +428,7 @@ Code 503 : 399 (79.8 %)
 Можно еще проверить статистику
 
 ```bash
-kubectl exec -n cinemaabyss fortio-deploy-b6757cbbb-7c9qg -c istio-proxy -- pilot-agent request GET stats | grep movies-service | grep pending
+kubectl exec -n cinemaabyss $FORTIO_POD -c istio-proxy -- pilot-agent request GET stats | grep movies-service | grep pending
 ```
 
 И там смотрим 
@@ -422,7 +442,7 @@ You can see 21 for the upstream_rq_pending_overflow value which means 21 calls s
 
 Удаляем все
 ```bash
-istioctl uninstall --purge
+istioctl uninstall --purge -y
 kubectl delete namespace istio-system
 kubectl delete all --all -n cinemaabyss
 kubectl delete namespace cinemaabyss
