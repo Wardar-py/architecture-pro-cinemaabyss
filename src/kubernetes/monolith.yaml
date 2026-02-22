@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: monolith
-        image:  ghcr.io/db-exp/cinemaabysstest/monolith:latest
+        image:  ghcr.io/wardar-py/architecture-pro-cinemaabyss/monolith:sha-3b42979
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
