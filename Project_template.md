@@ -57,7 +57,8 @@
     - Добавьте в docker-compose новый сервис, kafka там уже есть
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
-Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
+Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090
+
 [Movie_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/movie_events.png)
 [Payment_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/payment_events.png)
 [User_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/user_events.png)
@@ -276,7 +277,9 @@ cat .docker/config.json | base64
 
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
+
 [Events_service](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/events_service.png)
+
 [Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/web_movies.png)
 
 ## Задание 4
@@ -352,6 +355,7 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+
 [Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/task_4_web_movies.png)
 
 
@@ -439,6 +443,7 @@ You can see 21 for the upstream_rq_pending_overflow value which means 21 calls s
 ```
 
 Приложите скриншот работы circuit breaker'а
+
 [Circuit_breaker](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/curcuit_breaker.png)
 
 
