@@ -5,7 +5,7 @@
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
 
-[Диаграмма контейнеров](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/diagrams/ms_c4_container.puml)
+[Диаграмма контейнеров](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/src/diagrams/c4_container.puml)
 
 
 ## Задание 2
@@ -58,10 +58,10 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
-[Movie_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/movie_events.png)
-[Payment_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/payment_events.png)
-[User_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/user_events.png)
-
+[Movie_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/movie_events.png)
+[Payment_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/payment_events.png)
+[User_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/user_events.png)
+[Local_tests](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/local_tests.png)
 
 ## Задание 3
 
@@ -276,8 +276,8 @@ cat .docker/config.json | base64
 
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
-[Events_service](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/events_service.png)
-[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/web_movies.png)
+[Events_service](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/events_service.png)
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/web_movies.png)
 
 ## Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -352,7 +352,7 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
-[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/warmhouse/screenshots/task_4_web_movies.png)
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/task_4_web_movies.png)
 
 
 # Задание 5
@@ -439,6 +439,8 @@ You can see 21 for the upstream_rq_pending_overflow value which means 21 calls s
 ```
 
 Приложите скриншот работы circuit breaker'а
+[Circuit_breaker](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/curcuit_breaker.png)
+
 
 Удаляем все
 ```bash
