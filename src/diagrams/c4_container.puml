@@ -1,0 +1,82 @@
+@startuml
+!include <C4/C4_Container>
+
+title C4 container for Cinema
+
+Person(customer, "Customer", "A person who wants to watch films.")
+
+System_Boundary(c1, "Cinema System") {
+    Container(web_app, "Web Application", "React", "Provides an interface for watching films")
+    Container(gateway, "Gateway", "Python, FastAPI", "Handles business logic via JSON/HTTPS")
+
+    System_Boundary(c2, "Authorization Service") {
+        Container(auth, "Authorization", "Python, FastAPI", "Handles user login to the application via JSON/HTTPS")
+        ContainerDb(db_auth, "Database Auth", "PostgreSQL", "Stores user data")
+    }
+    System_Boundary(c3, "User Service") {
+        Container(user, "User", "Python, FastAPI", "Handles business logic for executing device operation scenarios via JSON/HTTPS")
+        ContainerDb(db_user, "Database User", "PostgreSQL", "Stores users info")
+    }
+    System_Boundary(c4, "Movie Service") {
+        Container(movie, "Movie", "Python, FastAPI", "Handles business logic for watching films via JSON/HTTPS")
+        ContainerDb(db_movie, "Database Movie", "S3", "Stores films data")
+        ContainerDb(db_meta, "Database Meta", "PostgreSQL", "Stores films meta info")
+    }
+    System_Boundary(c5, "Billing Service") {
+        Container(billing, "Billing", "Python, FastAPI", "Handles business logic for billing via JSON/HTTPS")
+        ContainerDb(db_billing, "Database Billing", "PostgreSQL", "Stores users subscriptions info")
+    }
+    System_Boundary(c7, "Recommendations Service") {
+        Container(recommendations, "Recommendations", "Python, FastAPI", "Handles business logic for film recommendations")
+        ContainerDb(db_recommendations, "Database recommendations", "DynamoDB", "Stores films recommendations with TTL")
+    }
+    System_Boundary(c8, "Discounts Service") {
+        Container(discounts, "Discounts", "Python, FastAPI", "Handles business logic for discounts via JSON/HTTPS")
+        ContainerDb(db_discounts, "Database Discounts", "PostgreSQL", "Stores users discounts")
+    }
+    Container(pusher, "Pusher", "Python, FastAPI", "Handles notification sending logic")
+    ContainerQueue(queue, "Kafka")
+}
+
+System_Ext(pusher_api, "Pusher API", "External pusher system for WebSocket connections.")
+System_Ext(billing_api, "Billing API", "External billing system.")
+System_Ext(recommendations_api, "Recommendations API", "External recommendation system.")
+
+'Связи
+Rel(customer, web_app, "Accesses via", "HTTPS")
+Rel(web_app, gateway, "Sends API requests", "HTTPS/JSON")
+
+Rel(gateway, auth, "Validates authentication tokens", "HTTPS/JSON")
+Rel(auth, db_auth, "Reads/Writes auth data", "SQL")
+
+Rel(gateway, user, "Fetch information about user", "HTTPS/JSON")
+Rel(user, db_user, "Reads/Writes user data", "SQL")
+
+Rel(gateway, movie, "Fetch movie", "HTTPS/JSON")
+Rel(movie, db_movie, "Reads/Writes movie data", "SQL")
+Rel(movie, db_meta, "Reads/Writes films metadata", "SQL")
+
+Rel(gateway, billing, "Create new subscriptions", "HTTPS/JSON")
+Rel(billing, billing_api, "Payout subscriptions", "HTTPS/JSON")
+Rel(billing, db_billing, "Reads/Writes subscriptions data", "SQL")
+
+Rel(gateway, recommendations, "Fetch user recommendations", "HTTPS/JSON")
+Rel(recommendations, db_recommendations, "Reads recommendations data", "PartiQL")
+
+Rel(gateway, discounts, "Fetch information about user discounts", "HTTPS/JSON")
+Rel(discounts, db_discounts, "Reads/Writes discounts data", "SQL")
+
+'Ивенты приложения
+Rel(billing, queue, "Publishes billing events for pusher", "HTTPS")
+Rel(user, queue, "Publishes user events for pusher", "HTTPS")
+Rel(discounts, queue, "Publishes discounts events for pusher", "HTTPS")
+Rel(queue, pusher, "Consumes notification events", "HTTPS")
+Rel(pusher, pusher_api, "Send events data", "HTTPS/JSON")
+Rel(pusher_api, web_app, "Frontend subscribes to events\nand displays notifications", "WebSocket")
+
+'Система рекомендаций
+Rel(movie, queue, "Publishes movie events for recommendations", "HTTPS")
+Rel(queue, recommendations, "Consumes movie events", "HTTPS")
+Rel(recommendations, recommendations_api, "Send events data", "HTTPS/JSON")
+
+@enduml

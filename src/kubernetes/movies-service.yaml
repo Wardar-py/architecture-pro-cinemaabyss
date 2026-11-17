@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: movies-service
-        image: ghcr.io/db-exp/cinemaabysstest/movies-service:latest
+        image: ghcr.io/wardar-py/architecture-pro-cinemaabyss/movies-service:sha-3b42979
         imagePullPolicy: Always
         ports:
         - containerPort: 8081

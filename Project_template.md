@@ -4,8 +4,8 @@
 
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
-Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
+
+[Диаграмма контейнеров](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/src/diagrams/c4_container.puml)
 
 
 ## Задание 2
@@ -57,8 +57,12 @@
     - Добавьте в docker-compose новый сервис, kafka там уже есть
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
-Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090 
+Приложите скриншот тестов и скриншот состояния топиков Kafka http://localhost:8090
 
+[Movie_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/movie_events.png)
+[Payment_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/payment_events.png)
+[User_events](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/user_events.png)
+[Local_tests](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/local_tests.png)
 
 ## Задание 3
 
@@ -274,6 +278,9 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+[Events_service](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/events_service.png)
+
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/web_movies.png)
 
 ## Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -331,7 +338,7 @@ kubectl delete  namespace cinemaabyss
 ```
 Запустите 
 ```bash
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
 ```
 Если в процессе будет ошибка
 ```code
@@ -349,6 +356,8 @@ minikube tunnel
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
 
+[Web](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/task_4_web_movies.png)
+
 
 # Задание 5
 Компания планирует активно развиваться и для повышения надежности, безопасности, реализации сетевых паттернов типа Circuit Breaker и канареечного деплоя вам как архитектору необходимо развернуть istio и настроить circuit breaker для monolith и movies сервисов.
@@ -359,16 +368,36 @@ helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
 
 helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
+docker pull istio/proxyv2:1.29.0 #грузим последний образ локально, у миникуб нет доступа в интернет
+minikube stop # остонавливаем виртуалку
+minikube image load istio/proxyv2:1.29.0 # закидываем в миникуб, после пытаемся поднять istio-ingressgateway, если упал скачиваем новую версию
+minikube start # запускаемся после скачивания
 helm install istio-ingressgateway istio/gateway -n istio-system
+
 helm install istiod istio/istiod -n istio-system --wait
 
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
+
+#-------------------------------------------------------------------------------------------
+# после поднятия подов, если кафка лежит и есть такая ошибка 'InconsistentClusterIdException: The Cluster ID vgtRNWKrS7eFthyjoPN-3w doesn't match stored clusterId Some(tWBF63F_Tey082b9uVu3Mg) in meta.properties'
+# то нужно снести kafka-data pvc для этого:
+kubectl get pvc -n cinemaabyss | grep kafka
+kubectl delete pvc data-kafka-0 -n cinemaabyss
+# если долго сносится
+kubectl get pvc -n cinemaabyss   # посмотреть статус
+kubectl describe pvc kafka-data -n cinemaabyss   # возможные ошибки
+# сносим принудительно, сносим также ресурсы
+kubectl delete pod kafka-0 -n cinemaabyss --force --grace-period=0
+kubectl delete -f src/kubernetes/kafka/kafka.yaml -n cinemaabyss
+# пересоздаем кафку
+kubectl apply -f src/kubernetes/kafka/kafka.yaml -n cinemaabyss
+#-------------------------------------------------------------------------------------------
 
 kubectl label namespace cinemaabyss istio-injection=enabled --overwrite
 
 kubectl get namespace -L istio-injection
 
-kubectl apply -f .\src\kubernetes\circuit-breaker-config.yaml -n cinemaabyss
+kubectl apply -f ./src/kubernetes/circuit-breaker-config.yaml -n cinemaabyss
 
 ```
 
@@ -403,7 +432,7 @@ Code 503 : 399 (79.8 %)
 Можно еще проверить статистику
 
 ```bash
-kubectl exec -n cinemaabyss fortio-deploy-b6757cbbb-7c9qg -c istio-proxy -- pilot-agent request GET stats | grep movies-service | grep pending
+kubectl exec -n cinemaabyss $FORTIO_POD -c istio-proxy -- pilot-agent request GET stats | grep movies-service | grep pending
 ```
 
 И там смотрим 
@@ -415,9 +444,12 @@ You can see 21 for the upstream_rq_pending_overflow value which means 21 calls s
 
 Приложите скриншот работы circuit breaker'а
 
+[Circuit_breaker](https://github.com/Wardar-py/architecture-pro-cinemaabyss/blob/cinema/screenshots/curcuit_breaker.png)
+
+
 Удаляем все
 ```bash
-istioctl uninstall --purge
+istioctl uninstall --purge -y
 kubectl delete namespace istio-system
 kubectl delete all --all -n cinemaabyss
 kubectl delete namespace cinemaabyss
